@@ -134,7 +134,7 @@ const resolvers = {
         const personCars = cars.filter(car => car.personId === person.id);
         return { ...person, cars: personCars };
       });
-    },
+    },    
     getPersonById: (root, { id }) => {
       const person = people.find(person => person.id === id);
       return person ? { ...person, cars: cars.filter(car => car.personId === id) } : null;
