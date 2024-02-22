@@ -16,7 +16,7 @@ const people = [
   }
 ]
 
-const cars = [
+let cars = [
   {
     id: '1',
     year: '2019',
@@ -92,60 +92,72 @@ const cars = [
 ]
 
 const typeDefs = `
-type Person {
-  id: ID!
-  firstName: String!
-  lastName: String!
-  cars: [Car]!
-}
+  type Person {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    cars: [Car]!
+  }
 
-type Car {
-  id: ID!
-  year: String!
-  make: String!
-  model: String!
-  price: String!
-  personId: ID!
-}
+  type Car {
+    id: ID!
+    year: Int!
+    make: String!
+    model: String!
+    price: Float!
+    personId: ID!
+  }
 
-type Query {
-  getAllPeople: [Person]!
-  getPersonById(id: ID!): Person
-  personWithCars(id: ID!): Person
-  getAllCars: [Car]!
-}
+  type Query {
+    getAllPeople: [Person]!
+    getPersonById(id: ID!): Person
+    getAllCars: [Car]!
+    getCarById(id: ID!): Car
+    personWithCars(id: ID!): Person
+  }
 
-type Mutation {
-  createPerson(firstName: String!, lastName: String!): Person!
-  updatePerson(id: ID!, firstName: String, lastName: String): Person
-  deletePerson(id: ID!): ID
+  type Mutation {
+    createPerson(firstName: String!, lastName: String!): Person!
+    updatePerson(id: ID!, firstName: String, lastName: String): Person
+    deletePerson(id: ID!): ID
 
-  createCar(year: String!, make: String!, model: String!, price: String!, personId: ID!): Car!
-  updateCar(id: ID!, year: String, make: String, model: String, price: String): Car
-  deleteCar(id: ID!): ID
-}
+    createCar(year: Int!, make: String!, model: String!, price: Float!, personId: ID!): Car!
+    updateCar(id: ID!, year: Int, make: String, model: String, price: Float, personId: ID): Car
+    deleteCar(id: ID!): ID
+  }
 `
 
 const resolvers = {
   Query: {
-    getAllPeople: () => people,
-    getPersonById: (parent, { id }) => people.find(person => person.id === id),
-    personWithCars: (parent, { id }) => {
-      const person = people.find(person => person.id === id);
-      if (!person) return null;
-
-      const personWithCars = { ...person, cars: cars.filter(car => car.personId === id) };
-      return personWithCars;
+    getAllPeople: () => {
+      return people.map(person => {
+        const personCars = cars.filter(car => car.personId === person.id);
+        return { ...person, cars: personCars };
+      });
     },
-    getAllCars: () => cars,
+    getPersonById: (root, { id }) => {
+      const person = people.find(person => person.id === id);
+      return person ? { ...person, cars: cars.filter(car => car.personId === id) } : null;
+    },    
+    getAllCars: (root, args) => cars,
+    getCarById: (root, { id }) => cars.find(car => car.id === id),
+    personWithCars: (root, { id }) => {
+      const person = people.find(person => person.id === id);
+      if (!person) {
+        console.error(`Person with id ${id} not found.`);
+        return null;
+      }
+      const personCars = cars.filter(car => car.personId === id);
+      return { ...person, cars: personCars || [] };
+    },
   },
   Mutation: {
-    createPerson: (parent, { firstName, lastName }) => {
-      const newPerson = { id: String(people.length + 1), firstName, lastName };
+    createPerson: (root, { firstName, lastName }) => {
+      const newPerson = { id: String(people.length + 1), firstName, lastName, cars: [] };
       people.push(newPerson);
       return newPerson;
     },
-    updatePerson: (parent, { id, firstName, lastName }) => {
+    updatePerson: (root, { id, firstName, lastName }) => {
       const personIndex = people.findIndex(person => person.id === id);
       if (personIndex === -1) return null;
 
@@ -153,28 +165,46 @@ const resolvers = {
       people[personIndex] = updatedPerson;
       return updatedPerson;
     },
-    deletePerson: (parent, { id }) => {
+    deletePerson: (root, { id }) => {
       const personIndex = people.findIndex(person => person.id === id);
       if (personIndex === -1) return null;
 
       const deletedPersonId = people[personIndex].id;
       people.splice(personIndex, 1);
+
+      cars = cars.filter(car => car.personId !== id);
       return deletedPersonId;
     },
-    createCar: (parent, { year, make, model, price, personId }) => {
+    createCar: (root, { year, make, model, price, personId }) => {
       const newCar = { id: String(cars.length + 1), year, make, model, price, personId };
       cars.push(newCar);
+
+      const personIndex = people.findIndex(person => person.id === personId);
+      if (personIndex !== -1) {
+        people[personIndex].cars.push(newCar);
+      }
       return newCar;
     },
-    updateCar: (parent, { id, year, make, model, price }) => {
+    updateCar: (root, { id, year, make, model, price, personId }) => {
       const carIndex = cars.findIndex(car => car.id === id);
       if (carIndex === -1) return null;
 
-      const updatedCar = { ...cars[carIndex], year, make, model, price };
+      const updatedCar = { ...cars[carIndex], year, make, model, price, personId };
       cars[carIndex] = updatedCar;
+
+      if (updatedCar.personId !== personId) {
+        const oldPersonIndex = people.findIndex(person => person.id === updatedCar.personId);
+        const newPersonIndex = people.findIndex(person => person.id === personId);
+
+        if (oldPersonIndex !== -1 && newPersonIndex !== -1) {
+          people[oldPersonIndex].cars = people[oldPersonIndex].cars.filter(car => car.id !== id);
+          people[newPersonIndex].cars.push(updatedCar);
+        }
+      }
+
       return updatedCar;
     },
-    deleteCar: (parent, { id }) => {
+    deleteCar: (root, { id }) => {
       const carIndex = cars.findIndex(car => car.id === id);
       if (carIndex === -1) return null;
 
@@ -185,4 +215,5 @@ const resolvers = {
   },
 };
 
-export {typeDefs, resolvers}
+export { typeDefs, resolvers };
+
