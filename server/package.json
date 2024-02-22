@@ -4,9 +4,22 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "start": "nodemon ./server.js --exec babel-node -e js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "CindyCharvet",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/client": "^3.9.5",
+    "@apollo/server": "^4.10.0",
+    "express": "^4.18.2",
+    "graphql": "^16.8.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "nodemon": "^3.0.3"
+  }
 }
