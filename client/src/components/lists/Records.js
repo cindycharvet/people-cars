@@ -1,15 +1,16 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Card } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import Link from "antd/es/typography/Link";
 import { useQuery } from "@apollo/client";
 import { GET_ALL_PEOPLE_WITH_CARS } from "../graphql/queries";
 import DeleteButton from "../buttons/DeleteButton";
 import UpdatePerson from "../forms/UpdatePerson";
-import UpdateCar from "../forms/UpdateCar"; // Import the UpdateCar form
+import UpdateCar from "../forms/UpdateCar"; 
 
 const Records = () => {
   const { loading, error, data } = useQuery(GET_ALL_PEOPLE_WITH_CARS);
+  const navigate = useNavigate();
 
   const [personEditMode, setPersonEditMode] = useState(null);
   const [carEditMode, setCarEditMode] = useState(null);
@@ -83,7 +84,7 @@ const Records = () => {
               </Card>
             ))
           )}
-          <Link>Learn More</Link>
+        <span style={{ color:"#1677ff", cursor: "pointer" }} onClick={() => navigate(`/people/${person.id}`)}>Learn More</span>
         </Card>
       ))}
     </>
