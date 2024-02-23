@@ -20,9 +20,7 @@ const App = () => {
         <div className="App">
           <Title />
           <Divider />
-          <Divider>Add Person</Divider>
           <AddPerson />
-          <Divider>Add Car</Divider>
           <AddCar />
           <Divider>Records</Divider>
           <Routes>

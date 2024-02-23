@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { v4 as uuid4 } from 'uuid';
-import { Button, Form, Input, InputNumber, Select } from 'antd';
+import { Button, Form, Input, InputNumber, Select, Divider } from 'antd';
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_ALL_PEOPLE_WITH_CARS, ADD_CAR } from "../graphql/queries";
 
@@ -82,7 +82,12 @@ const AddCar = () => {
         }
     };
 
+    const peopleAvailable = options && options.length > 0
+
     return (
+        peopleAvailable &&(
+        <div>
+        <Divider>Add Car</Divider>
         <Form
             name='add-car-form'
             layout="inline"
@@ -161,6 +166,8 @@ const AddCar = () => {
                 )}
             </Form.Item>
         </Form>
+        </div>
+        )
     );
 };
 

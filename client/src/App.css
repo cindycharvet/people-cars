@@ -58,8 +58,15 @@
   box-shadow: none;
 }
 
-.hideForms {
-  display: none;
+.person-show-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hide-on-show {
+  display: none !important;
 }
 
 @keyframes App-logo-spin {

@@ -22,7 +22,7 @@ const PersonShow = () => {
   const person = data.getPersonById;
 
   return (
-    <div>
+    <div className="person-show-container">
       <h2>{`${person.firstName} ${person.lastName}`}</h2>
       {person.cars.map((car) => (
         <div key={car.id}>

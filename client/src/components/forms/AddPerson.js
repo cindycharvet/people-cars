@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {v4 as uuid4} from 'uuid';
-import {Button, Form, Input} from 'antd'
+import {Button, Form, Input, Divider} from 'antd'
 import { useMutation } from "@apollo/client";
 import { ADD_PERSON, GET_ALL_PEOPLE_WITH_CARS } from "../graphql/queries";
 
@@ -51,6 +51,8 @@ const AddPerson = () => {
     };
     
     return(
+    <div>
+        <Divider>Add Person</Divider>
         <Form
             name='add-person-form'
             layout="inline"
@@ -89,6 +91,7 @@ const AddPerson = () => {
                 )}
             </Form.Item>
         </Form>
+    </div>
     )
 }
 
