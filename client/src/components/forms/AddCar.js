@@ -5,9 +5,9 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_ALL_PEOPLE_WITH_CARS, ADD_CAR } from "../graphql/queries";
 
 const AddCar = () => {
-    const [id] = useState(uuid4())
-    const [form] = Form.useForm()
-    const [, forceUpdate] = useState()
+    const [id] = useState(uuid4());
+    const [form] = Form.useForm();
+    const [, forceUpdate] = useState();
 
     const { loading, error, data } = useQuery(GET_ALL_PEOPLE_WITH_CARS);
     const [addCar] = useMutation(ADD_CAR);
@@ -18,17 +18,20 @@ const AddCar = () => {
     }));
 
     useEffect(() => {
-        forceUpdate({})
+        forceUpdate({});
     }, []);
 
-    const onChange = (value) => {
-        console.log('changed', value);
-    };
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    if (error) {
+        return <p>Error: {error.message}</p>;
+    }
 
     const onChangeYear = (value) => {
-        console.log('changed year', value);
         form.setFieldsValue({ 'year': value }); 
-      };
+    };
 
     const onFinish = async (values) => {
         try {
@@ -46,16 +49,22 @@ const AddCar = () => {
                             query: GET_ALL_PEOPLE_WITH_CARS,
                         });
 
+                        console.log("Cached Data:", cachedData); 
+
                         if (cachedData) {
                             cache.writeQuery({
                                 query: GET_ALL_PEOPLE_WITH_CARS,
                                 data: {
                                     getAllPeople: cachedData.getAllPeople.map((person) => {
+                                        console.log("Current Person:", person); 
                                         if (person.id === values.person) {
-                                            return {
+                                            const updatedPerson = {
                                                 ...person,
-                                                cars: [...person.cars, createCar],
+                                                cars: person.cars ? [...person.cars, createCar] : [createCar],
                                             };
+
+                                            console.log("Updated Person:", updatedPerson); 
+                                            return updatedPerson;
                                         }
                                         return person;
                                     }),
@@ -67,12 +76,8 @@ const AddCar = () => {
                     }
                 },
             });
-
-            console.log("Added car:", data.createCar);
-
-            form.resetFields();
         } catch (error) {
-            console.error("Error adding car:", error);
+            console.error('Error adding car:', error);
         }
     };
 
@@ -90,7 +95,7 @@ const AddCar = () => {
                 label="Year"
                 name='year'
                 rules={[{ required: true, message: 'Please enter a year' }]}
-                >
+            >
                 <InputNumber
                     placeholder="Year"
                     onChange={onChangeYear}
@@ -125,7 +130,6 @@ const AddCar = () => {
                 <InputNumber
                     formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                     parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
-                    onChange={onChange}
                 />
             </Form.Item>
 
@@ -138,7 +142,6 @@ const AddCar = () => {
                 <Select
                     placeholder="Select a person"
                     style={{ width: 120 }}
-                    onChange={onChange}
                     options={options}
                 />
             </Form.Item>
@@ -157,7 +160,7 @@ const AddCar = () => {
                 )}
             </Form.Item>
         </Form>
-    )
-}
+    );
+};
 
 export default AddCar;

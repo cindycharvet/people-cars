@@ -32,14 +32,18 @@ const DeleteButton = ({ itemId, isPerson }) => {
   });
 
   const handleDelete = async () => {
-    try {
-      await deleteItem({
-        variables: {
-          id: itemId,
-        },
-      });
-    } catch (error) {
-      console.error(`Error deleting ${isPerson ? 'person' : 'car'}`, error);
+    const confirmDelete = window.confirm(`Are you sure you want to delete this ${isPerson ? 'person' : 'car'}?`);
+
+    if (confirmDelete) {
+      try {
+        await deleteItem({
+          variables: {
+            id: itemId,
+          },
+        });
+      } catch (error) {
+        console.error(`Error deleting ${isPerson ? 'person' : 'car'}`, error);
+      }
     }
   };
 
