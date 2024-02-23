@@ -5,7 +5,7 @@
   flex-direction: column;
   margin: 100px auto;
   padding: 40px;
-  width: 70%;
+  width: 75%;
 }
 
 .App-logo {
@@ -39,6 +39,10 @@
 }
 
 .ant-btn{
+  border-radius: 0;
+}
+
+.ant-input-number{
   border-radius: 0;
 }
 
