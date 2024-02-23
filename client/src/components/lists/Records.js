@@ -16,12 +16,12 @@ const Records = () => {
 
   const handlePersonEdit = (id) => {
     setPersonEditMode(id);
-    setCarEditMode(null); // Close edit mode for cars
+    setCarEditMode(null);
   };
 
   const handleCarEdit = (id) => {
     setCarEditMode(id);
-    setPersonEditMode(null); // Close edit mode for people
+    setPersonEditMode(null); 
   };
 
   if (loading) return "Loading...";
@@ -52,6 +52,7 @@ const Records = () => {
             <UpdatePerson
               person={person}
               onEditSuccess={() => setPersonEditMode(null)}
+              onCancelUpdate={() => setPersonEditMode(null)}
             />
           ) : (
             person.cars.map((car) => (

@@ -3,7 +3,7 @@ import { Button, Form, Input } from "antd";
 import { useMutation } from "@apollo/client";
 import { UPDATE_PERSON, GET_ALL_PEOPLE_WITH_CARS } from "../graphql/queries";
 
-const UpdatePerson = ({ person, onEditSuccess }) => {
+const UpdatePerson = ({ person, onEditSuccess, onCancelUpdate }) => {
   const [form] = Form.useForm();
   const [, forceUpdate] = useState();
 
@@ -63,6 +63,7 @@ const UpdatePerson = ({ person, onEditSuccess }) => {
       style={{ marginBottom: "40px" }}
       form={form}
       onFinish={onFinish}
+      onValuesChange={() => forceUpdate({})}
     >
       <Form.Item
         label="First Name"
@@ -82,18 +83,21 @@ const UpdatePerson = ({ person, onEditSuccess }) => {
 
       <Form.Item shouldUpdate={true}>
         {() => (
-          <Button
-            type="primary"
-            htmlType="submit"
-            disabled={
-              !form.isFieldsTouched(true) ||
-              form
-                .getFieldError()
-                .filter(({ errors }) => errors.length).length
-            }
-          >
-            Update Person
-          </Button>
+          <>
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={
+                !form.isFieldsTouched(true) ||
+                form.getFieldError().filter(({ errors }) => errors.length).length
+              }
+            >
+              Update Person
+            </Button>
+            <Button type="default" onClick={onCancelUpdate} style={{ marginLeft: 8 }}>
+              Cancel
+            </Button>
+          </>
         )}
       </Form.Item>
     </Form>
