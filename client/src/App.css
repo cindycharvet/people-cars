@@ -33,6 +33,15 @@
   border-radius: 0 !important;
 }
 
+.ant-divider-inner-text {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.ant-btn{
+  border-radius: 0;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

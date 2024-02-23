@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {v4 as uuid4} from 'uuid';
-import {Form, Input} from 'antd'
+import {Button, Form, Input} from 'antd'
 
 const AddPerson = () => {
     const [id] =  useState(uuid4())
     const [form] = Form.useForm()
+    const [, forceUpdate] = useState()
+
+    useEffect(()=>{
+        forceUpdate({})
+    },[])
 
     return(
         <Form
@@ -28,6 +33,20 @@ const AddPerson = () => {
                 rules={[{required: true, message: 'Please enter a last name'}]}
             >
                 <Input placeholder="Last Name" />
+            </Form.Item>
+
+            <Form.Item shouldUpdate={true}>
+                {()=>(
+                    <Button
+                    type="primary"
+                    htmlType="submit"
+                    disabled={
+                        !form.isFieldsTouched()
+                    }
+                    >
+                        Add Person
+                    </Button>
+                )}
             </Form.Item>
         </Form>
     )
