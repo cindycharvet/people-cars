@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {v4 as uuid4} from 'uuid';
-import {Button, Form, Input, InputNumber} from 'antd'
+import {Button, Form, Input, InputNumber, Select} from 'antd'
 
 const AddCar = () => {
     const [id] =  useState(uuid4())
@@ -9,6 +9,10 @@ const AddCar = () => {
 
     const onChange = (value) => {
         console.log('changed', value);
+    };
+
+    const handleChange = (value) => {
+        console.log(`selected ${value}`);
     };
 
     useEffect(()=>{
@@ -69,7 +73,27 @@ const AddCar = () => {
                 name='person'
                 rules={[{required: true, message: 'Please select a person'}]}
             >
-                <Input placeholder="Make" />
+                <Select
+                    placeholder="Select a person"
+                    style={{
+                        width: 120,
+                    }}
+                    onChange={handleChange}
+                    options={[
+                        {
+                        value: 'jack',
+                        label: 'Jack',
+                        },
+                        {
+                        value: 'lucy',
+                        label: 'Lucy',
+                        },
+                        {
+                        value: 'Yiminghe',
+                        label: 'yiminghe',
+                        },
+                    ]}
+                    />
             </Form.Item>
 
             <Form.Item shouldUpdate={true}>
@@ -78,7 +102,7 @@ const AddCar = () => {
                     type="primary"
                     htmlType="submit"
                     disabled={
-                        !form.isFieldsTouched()
+                        !form.isFieldsTouched(true) || form.getFieldError().filter(({errors}) => errors.length).length
                     }
                     >
                         Add Car

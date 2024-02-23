@@ -4,6 +4,7 @@ import { Divider } from 'antd';
 import Title from './components/layout/Title';
 import AddPerson  from './components/forms/AddPerson';
 import AddCar from './components/forms/AddCar';
+import Records from './components/lists/Records';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4001/graphql',
@@ -20,6 +21,8 @@ const App = () => {
       <AddPerson />
       <Divider>Add Car</Divider>
       <AddCar />
+      <Divider>Records</Divider>
+      <Records/>
     </div>
     </ApolloProvider>
   );

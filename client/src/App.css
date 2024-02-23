@@ -38,12 +38,23 @@
   font-size: 22px;
 }
 
-.ant-btn{
+.ant-btn, .ant-input-number, .ant-select-single.ant-select-lg .ant-select-selector{
   border-radius: 0;
 }
 
-.ant-input-number{
+.ant-select {
+  width: fit-content !important;
+}
+
+.ant-card-bordered{
+  width: 100%;
   border-radius: 0;
+}
+
+.ant-btn-default{
+  border: none;
+  background-color: white;
+  box-shadow: none;
 }
 
 @keyframes App-logo-spin {
