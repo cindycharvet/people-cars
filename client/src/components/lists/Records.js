@@ -6,20 +6,26 @@ import { useQuery } from "@apollo/client";
 import { GET_ALL_PEOPLE_WITH_CARS } from "../graphql/queries";
 import DeleteButton from "../buttons/DeleteButton";
 import UpdatePerson from "../forms/UpdatePerson";
+import UpdateCar from "../forms/UpdateCar"; // Import the UpdateCar form
 
 const Records = () => {
   const { loading, error, data } = useQuery(GET_ALL_PEOPLE_WITH_CARS);
 
-  const [editMode, setEditMode] = useState(null);
+  const [personEditMode, setPersonEditMode] = useState(null);
+  const [carEditMode, setCarEditMode] = useState(null);
 
-  const handleEdit = (personId) => {
-    setEditMode(personId);
+  const handlePersonEdit = (id) => {
+    setPersonEditMode(id);
+    setCarEditMode(null); // Close edit mode for cars
+  };
+
+  const handleCarEdit = (id) => {
+    setCarEditMode(id);
+    setPersonEditMode(null); // Close edit mode for people
   };
 
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
-
-  console.log("data", data);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-US", {
@@ -37,15 +43,15 @@ const Records = () => {
           actions={[
             <EditOutlined
               key={`edit-${person.id}`}
-              onClick={() => handleEdit(person.id)}
+              onClick={() => handlePersonEdit(person.id)}
             />,
             <DeleteButton itemId={person.id} isPerson />,
           ]}
         >
-          {editMode === person.id ? (
+          {personEditMode === person.id ? (
             <UpdatePerson
               person={person}
-              onEditSuccess={() => setEditMode(null)}
+              onEditSuccess={() => setPersonEditMode(null)}
             />
           ) : (
             person.cars.map((car) => (
@@ -61,11 +67,19 @@ const Records = () => {
                 actions={[
                   <EditOutlined
                     key={`edit-car-${car.id}`}
-                    onClick={() => handleEdit(car.id)}
+                    onClick={() => handleCarEdit(car.id)}
                   />,
                   <DeleteButton itemId={car.id} />,
                 ]}
-              ></Card>
+              >
+                {carEditMode === car.id && (
+                  <UpdateCar
+                    car={car}
+                    onFinishUpdate={() => setCarEditMode(null)}
+                    onCancelUpdate={() => setCarEditMode(null)}
+                  />
+                )}
+              </Card>
             ))
           )}
           <Link>Learn More</Link>
