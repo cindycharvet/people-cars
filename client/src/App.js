@@ -7,7 +7,7 @@ import AddCar from './components/forms/AddCar';
 import Records from './components/lists/Records';
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4001/graphql',
+  uri: 'http://localhost:4000/graphql',
   cache: new InMemoryCache()
 })
 
