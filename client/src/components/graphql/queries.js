@@ -47,6 +47,17 @@ export const DELETE_CAR = gql`
   }
 `;
 
+export const UPDATE_PERSON = gql`
+  mutation UpdatePerson($id: ID!, $firstName: String!, $lastName: String!) {
+    updatePerson(id: $id, firstName: $firstName, lastName: $lastName) {
+      id
+      firstName
+      lastName
+      # Other fields you might want to include in the response
+    }
+  }
+`;
+
 // ======================= QUERIES =============================
 
 export const GET_ALL_PEOPLE_WITH_CARS = gql`

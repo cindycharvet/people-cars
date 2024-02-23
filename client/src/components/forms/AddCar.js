@@ -76,6 +76,7 @@ const AddCar = () => {
                     }
                 },
             });
+            form.resetFields();
         } catch (error) {
             console.error('Error adding car:', error);
         }
