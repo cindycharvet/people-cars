@@ -1,8 +1,10 @@
-import { Card, Button } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import React from 'react';
+import { Card } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import Link from 'antd/es/typography/Link';
 import { useQuery } from '@apollo/client';
 import { GET_ALL_PEOPLE_WITH_CARS } from '../graphql/queries';
+import DeleteButton from '../buttons/DeleteButton';
 
 const Records = () => {
   const { loading, error, data } = useQuery(GET_ALL_PEOPLE_WITH_CARS);
@@ -27,7 +29,7 @@ const Records = () => {
           title={`${person.firstName} ${person.lastName}`}
           actions={[
             <EditOutlined key={`edit-${person.id}`} />,
-            <DeleteOutlined style={{ color: 'red' }} key={`delete-${person.id}`} />,
+            <DeleteButton itemId={person.id} isPerson />,
           ]}
         >
           {person.cars.map((car) => (
@@ -40,7 +42,7 @@ const Records = () => {
               }}
               actions={[
                 <EditOutlined key={`edit-car-${car.id}`} />,
-                <DeleteOutlined style={{ color: 'red' }} key={`delete-car-${car.id}`} />,
+                <DeleteButton itemId={car.id} />,
               ]}
             ></Card>
           ))}

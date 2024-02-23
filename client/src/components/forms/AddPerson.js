@@ -1,16 +1,55 @@
 import { useEffect, useState } from "react";
 import {v4 as uuid4} from 'uuid';
 import {Button, Form, Input} from 'antd'
+import { useMutation } from "@apollo/client";
+import { ADD_PERSON, GET_ALL_PEOPLE_WITH_CARS } from "../graphql/queries";
 
 const AddPerson = () => {
     const [id] =  useState(uuid4())
     const [form] = Form.useForm()
     const [, forceUpdate] = useState()
 
+    const [addPerson] = useMutation(ADD_PERSON)
+
     useEffect(()=>{
         forceUpdate({})
     },[])
 
+    const onFinish = async (values) => {
+    try {
+        const { data } = await addPerson({
+        variables: {
+            firstName: values.firstName,
+            lastName: values.lastName,
+        },
+        update: (cache, { data: { createPerson } }) => {
+            try {
+            const cachedData = cache.readQuery({
+                query: GET_ALL_PEOPLE_WITH_CARS,
+            });
+
+            if (cachedData) {
+                cache.writeQuery({
+                query: GET_ALL_PEOPLE_WITH_CARS,
+                data: {
+                    getAllPeople: [...cachedData.getAllPeople, createPerson],
+                },
+                });
+            }
+            } catch (error) {
+            console.error('Error updating cache:', error);
+            }
+        },
+        });
+
+        console.log("Added person:", data.createPerson);
+
+        form.resetFields();
+    } catch (error) {
+        console.error("Error adding person:", error);
+    }
+    };
+    
     return(
         <Form
             name='add-person-form'
@@ -18,6 +57,7 @@ const AddPerson = () => {
             size="large"
             style={{marginBottom: '40px'}}
             form={form}
+            onFinish={onFinish} 
         >
             <Form.Item
                 label="First Name"
